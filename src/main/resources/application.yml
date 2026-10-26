@@ -1,3 +1,22 @@
 spring:
   application:
     name: repup
+  jpa:
+    # Schema is owned by Flyway; Hibernate only checks that entities match it.
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    locations: classpath:db/migration
+
+server:
+  error:
+    # Never show stack traces or exception details to users.
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

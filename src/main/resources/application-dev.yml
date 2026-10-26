@@ -1,0 +1,17 @@
+# Local development: talks to the Postgres started with `docker compose up -d`.
+# Reads POSTGRES_DB / POSTGRES_USER / POSTGRES_PASSWORD from the git-ignored .env file.
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  thymeleaf:
+    # Pick up template edits without restarting.
+    cache: false
+
+management:
+  endpoint:
+    health:
+      show-details: always

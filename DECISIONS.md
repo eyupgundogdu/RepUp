@@ -43,3 +43,9 @@ Every significant technical choice, with its reasoning. This file is the main so
 - Alternatives considered: Adding it on day one.
 - Why: As soon as Spring Security is on the classpath it locks every page behind a generated login form until it is configured, which would get in the way of the hello-world deploy and the base layout work.
 - Trade-offs: The week-1 hello-world deploy has no security headers or login yet.
+
+## Load local DB settings from .env via Spring's config import
+- Decision: The `dev` profile reads `.env` with `spring.config.import: optional:file:.env[.properties]`, so the app and Docker Compose share one git-ignored file for the database name, user and password.
+- Alternatives considered: Exporting the variables in the shell before each run; a dotenv library; hard-coding dev credentials in `application-dev.yml`.
+- Why: Built into Spring Boot (no new dependency), nothing secret is committed, and `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev` works without extra setup. Production (Render) uses real environment variables instead.
+- Trade-offs: Only works when the app is started from the project folder; `.env` must stay in simple `KEY=value` form.
