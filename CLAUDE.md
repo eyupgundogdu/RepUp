@@ -8,6 +8,7 @@ The owner is building this entirely through vibe coding and does not write Java.
 Java 21 · Spring Boot 3 (Maven) · Thymeleaf · Spring Security · Spring Data JPA · PostgreSQL · Flyway · Tailwind CSS · vanilla JS + Chart.js · jsoup · JUnit 5. Deployed with Docker on Render; DB on Neon.
 
 ## Commands
+- First time only: `cp .env.example .env` and set your own `POSTGRES_PASSWORD`
 - Start local DB: `docker compose up -d`
 - Run app (dev profile): `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`
 - Tests: `./mvnw test`
