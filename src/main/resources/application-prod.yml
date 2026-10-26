@@ -1,0 +1,25 @@
+# Production on Render. Every secret comes from environment variables set
+# in the Render dashboard; nothing sensitive lives in this file.
+server:
+  # Render tells the app which port to listen on.
+  port: ${PORT:8080}
+  # Render terminates HTTPS in front of the app; trust its X-Forwarded-* headers
+  # so redirects and generated links use https.
+  forward-headers-strategy: framework
+
+spring:
+  datasource:
+    # JDBC form of the Neon connection string, e.g.
+    # jdbc:postgresql://<host>/<db>?sslmode=require
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      # Neon's free tier allows few connections; a small pool is plenty.
+      maximum-pool-size: 5
+
+management:
+  endpoint:
+    health:
+      # Only report UP/DOWN publicly, never internal details.
+      show-details: never
