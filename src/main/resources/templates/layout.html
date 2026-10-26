@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--/*
+  Shared page layout. A page uses it like this:
+    <html th:replace="~{layout :: page(title='...', description='...', content=~{::main})}">
+  and only writes its own <main> element.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="page(title, description, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">RepUp</title>
+    <meta name="description" th:content="${description}">
+    <link rel="canonical" th:href="${canonicalUrl}">
+    <!-- Applies the saved or OS theme before first paint, so the page never flashes the wrong theme.
+         Keep it byte-for-byte identical: its SHA-256 hash will be allowed in the Content-Security-Policy. -->
+    <script>(function(){var t=null;try{t=localStorage.getItem('theme');}catch(e){}var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d);})();</script>
+    <link rel="preload" th:href="@{/fonts/inter-latin-wght.woff2}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+    <script th:src="@{/js/theme.js}" defer></script>
+    <script type="application/ld+json" th:inline="javascript">
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "RepUp",
+          "url": [[${baseUrl}]],
+          "logo": [[${baseUrl + '/favicon.svg'}]]
+        }
+    </script>
+</head>
+<body class="flex min-h-screen flex-col">
+<a href="#main" class="sr-only rounded-lg bg-accent px-4 py-2 text-on-accent focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50">Skip to content</a>
+
+<header class="sticky top-0 z-40 border-b border-border bg-bg/90 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+        <a th:href="@{/}" class="flex items-center gap-2 text-xl font-extrabold tracking-tight text-text no-underline hover:no-underline">
+            <span class="grid size-8 place-items-center rounded-lg bg-accent text-sm text-on-accent" aria-hidden="true">R</span>
+            RepUp
+        </a>
+        <nav aria-label="Main" class="flex items-center gap-1">
+            <!-- Exercises, Log in and Get started links are added in Week 2 when those pages exist. -->
+            <button id="theme-toggle" type="button" aria-label="Switch to dark mode"
+                    class="grid size-11 cursor-pointer place-items-center rounded-xl text-muted hover:bg-accent-soft hover:text-text">
+                <!-- Moon in light mode, sun in dark mode -->
+                <svg class="size-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+                <svg class="hidden size-5 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<div id="main" class="flex-1" tabindex="-1">
+    <main th:replace="${content}">Page content</main>
+</div>
+
+<footer class="border-t border-border">
+    <div class="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-8 text-sm text-muted sm:flex-row sm:justify-between">
+        <p>&copy; <span th:text="${#temporals.year(#temporals.createNow())}">2026</span> RepUp</p>
+        <p>Strength-training planner and workout logger</p>
+    </div>
+</footer>
+</body>
+</html>

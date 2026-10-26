@@ -73,3 +73,21 @@ Every significant technical choice, with its reasoning. This file is the main so
 - Alternatives considered: Google Fonts link; system font stack only.
 - Why: No request to a third party (better privacy, no extra DNS/TLS handshake, simpler CSP); one small file covers all weights.
 - Trade-offs: Only Latin characters use Inter; others (e.g. Turkish ş, ğ) fall back to the system font. The font must be updated by hand.
+
+## Shared layout with plain Thymeleaf fragments (no Layout Dialect)
+- Decision: One `layout.html` defines `page(title, description, content)`; each page replaces its `<html>` with that fragment and passes its own `<main>`. The layout owns the `<head>` (title, meta description, canonical link, Organization JSON-LD, fonts, CSS, theme script), the skip link, header and footer.
+- Alternatives considered: `thymeleaf-layout-dialect` (decorator pattern); copying the head into every page.
+- Why: Built into Thymeleaf, so no extra dependency; SEO tags live in one place and every page is forced to supply a title and description.
+- Trade-offs: Pages that need extra `<head>` content (e.g. page-specific JSON-LD or Open Graph) will need another fragment parameter, added in the Week 3 SEO work.
+
+## Canonical URL built from APP_BASE_URL
+- Decision: `SeoModelAdvice` adds `canonicalUrl` = `app.base-url` + request path to every page model; query strings are dropped.
+- Alternatives considered: Building the URL from the incoming request host; hard-coding the domain.
+- Why: The request host can be spoofed or differ behind Render's proxy; a configured base URL is stable and gives one canonical address per page (filter/tracking parameters do not create duplicates).
+- Trade-offs: `APP_BASE_URL` must be set correctly in production, or canonical links point to localhost.
+
+## No-flash dark mode: inline head script + deferred toggle script
+- Decision: A one-line inline script in `<head>`, placed before the stylesheet, reads `localStorage.theme` (or the OS `prefers-color-scheme`) and sets `class="dark"` before first paint. `/js/theme.js` (deferred) handles the header toggle, saves the choice, and follows live OS changes only while no choice is saved.
+- Alternatives considered: Applying the theme from an external script (flashes the light theme first); CSS-only `prefers-color-scheme` (no manual override); storing the theme in a cookie and rendering the class on the server.
+- Why: Meets FR-16 with no flash, works for logged-out visitors, and stays tiny. The cookie approach is not needed until the theme is saved per user (`user_profile.theme`, Week 5).
+- Trade-offs: The inline script must be allowed by the Content-Security-Policy. Its hash is `sha256-itl8bNhUz+0cvkem/Ed2RBsdLTZ1wlO1XpKFstUATYY=`; it must be recalculated if the script changes by even one character.
