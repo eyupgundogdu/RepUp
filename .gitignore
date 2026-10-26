@@ -1,0 +1,17 @@
+# Build output
+target/
+
+# Front-end tooling (Tailwind)
+node_modules/
+src/main/resources/static/css/app.css
+
+# Secrets (local env vars)
+.env
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# macOS
+.DS_Store
