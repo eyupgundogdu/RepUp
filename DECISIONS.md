@@ -91,3 +91,9 @@ Every significant technical choice, with its reasoning. This file is the main so
 - Alternatives considered: Applying the theme from an external script (flashes the light theme first); CSS-only `prefers-color-scheme` (no manual override); storing the theme in a cookie and rendering the class on the server.
 - Why: Meets FR-16 with no flash, works for logged-out visitors, and stays tiny. The cookie approach is not needed until the theme is saved per user (`user_profile.theme`, Week 5).
 - Trade-offs: The inline script must be allowed by the Content-Security-Policy. Its hash is `sha256-itl8bNhUz+0cvkem/Ed2RBsdLTZ1wlO1XpKFstUATYY=`; it must be recalculated if the script changes by even one character.
+
+## Multi-stage Docker image for Render
+- Decision: One `Dockerfile` with three stages: Node 24 compiles Tailwind CSS, Eclipse Temurin 21 JDK builds the jar (tests skipped, no DB needed), and a Temurin 21 JRE image runs it as a non-root user with `SPRING_PROFILES_ACTIVE=prod` and `-XX:MaxRAMPercentage=75`.
+- Alternatives considered: Render's native Java runtime (not offered; Render runs Java through Docker); a single-stage image with JDK, Maven and Node; Spring Boot buildpacks (`spring-boot:build-image`).
+- Why: The final image contains only the JRE and the jar (smaller, fewer tools for an attacker), the CSS is always rebuilt from source so the git-ignored `app.css` never goes stale, and dependency downloads are cached in their own layer. A plain Dockerfile is easy to read and explain.
+- Trade-offs: Tests do not run during the Docker build, so `./mvnw test` must pass locally before pushing; the first build on Render takes a few minutes.

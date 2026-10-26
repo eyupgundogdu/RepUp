@@ -1,0 +1,11 @@
+# Keep the Docker build context small and free of secrets.
+.git/
+.env
+target/
+node_modules/
+src/main/resources/static/css/app.css
+.idea/
+.vscode/
+*.iml
+.DS_Store
+docs/

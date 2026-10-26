@@ -15,6 +15,7 @@ Java 21 · Spring Boot 3 (Maven) · Thymeleaf · Spring Security · Spring Data 
 - First time only (front-end): `npm install`
 - Build CSS once: `npm run build:css` (needed before running the app; output is git-ignored)
 - Rebuild CSS on template changes: `npm run watch:css` (run in a second terminal)
+- Build the production image locally: `docker build -t repup:local .`
 (Update this section when commands change.)
 
 ## Code conventions
