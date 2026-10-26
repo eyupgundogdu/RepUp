@@ -12,7 +12,9 @@ Java 21 · Spring Boot 3 (Maven) · Thymeleaf · Spring Security · Spring Data 
 - Start local DB: `docker compose up -d`
 - Run app (dev profile): `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`
 - Tests: `./mvnw test`
-- Tailwind build/watch: see `package.json` / README once set up
+- First time only (front-end): `npm install`
+- Build CSS once: `npm run build:css` (needed before running the app; output is git-ignored)
+- Rebuild CSS on template changes: `npm run watch:css` (run in a second terminal)
 (Update this section when commands change.)
 
 ## Code conventions

@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>RepUp – Personalised strength-training planner and workout logger</title>
     <meta name="description" content="RepUp builds a strength-training programme around your goal, schedule and equipment, then helps you log every set and progress week by week.">
+    <link rel="preload" th:href="@{/fonts/inter-latin-wght.woff2}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
-<body>
-<main>
-    <h1>RepUp</h1>
-    <p>Personalised strength-training planner and workout logger. Coming soon.</p>
+<body class="min-h-screen">
+<main class="mx-auto max-w-2xl px-4 py-16">
+    <h1 class="text-4xl font-bold tracking-tight">RepUp</h1>
+    <p class="mt-3 text-lg text-muted">Personalised strength-training planner and workout logger. Coming soon.</p>
+    <div class="mt-8 rounded-2xl border border-border bg-surface p-6">
+        <p>Design tokens preview</p>
+        <a href="#" class="mt-4 inline-flex min-h-11 items-center rounded-xl bg-accent px-5 font-semibold text-on-accent no-underline hover:bg-accent-hover hover:no-underline">Primary button</a>
+        <p class="mt-4 rounded-lg bg-accent-soft px-3 py-2">Completed set row</p>
+    </div>
 </main>
 </body>
 </html>

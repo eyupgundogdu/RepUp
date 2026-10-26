@@ -22,7 +22,7 @@ class HomeControllerTest {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"))
-                .andExpect(content().string(containsString("<h1>RepUp</h1>")))
+                .andExpect(content().string(containsString(">RepUp</h1>")))
                 .andExpect(content().string(containsString("<meta name=\"description\"")));
     }
 }

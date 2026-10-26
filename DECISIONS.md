@@ -49,3 +49,27 @@ Every significant technical choice, with its reasoning. This file is the main so
 - Alternatives considered: Exporting the variables in the shell before each run; a dotenv library; hard-coding dev credentials in `application-dev.yml`.
 - Why: Built into Spring Boot (no new dependency), nothing secret is committed, and `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev` works without extra setup. Production (Render) uses real environment variables instead.
 - Trade-offs: Only works when the app is started from the project folder; `.env` must stay in simple `KEY=value` form.
+
+## Tailwind CSS v4 built with the standalone npm CLI
+- Decision: Compile Tailwind v4 (`tailwindcss` + `@tailwindcss/cli`, pinned to 4.3.3) with `npm run build:css` from `src/main/frontend/app.css` into `src/main/resources/static/css/app.css`. The output file is git-ignored and is rebuilt in the Docker image.
+- Alternatives considered: Tailwind Play CDN script; Tailwind v3 with `tailwind.config.js`; running npm from Maven via `frontend-maven-plugin`; Bootstrap.
+- Why: The CDN is meant for prototyping only (large runtime script, no purging, hurts Lighthouse). v4 keeps all configuration in one CSS file and only ships the classes the templates use (≈9 KB today). Running the CLI directly keeps the Maven build plain Java and easy to explain.
+- Trade-offs: Node.js is needed for front-end work and in the Docker build stage; developers must run `npm run watch:css` while editing templates.
+
+## Design tokens as CSS variables with a .dark class
+- Decision: Colours are CSS variables on `:root` (light) and overridden on `.dark` (dark); Tailwind's `@theme inline` maps them to utilities like `bg-accent`, `text-muted`, `bg-surface`. Dark mode is class-based (`@custom-variant dark`), so a user toggle can override the OS setting.
+- Alternatives considered: Tailwind's default media-query dark mode; writing `dark:` variants on every element.
+- Why: Each colour is defined once, components stay free of duplicated `dark:` colour classes, and a class lets the Settings page store the user's choice.
+- Trade-offs: Needs a small inline script in `<head>` to set the class before first paint (no flash of the wrong theme), which must be allowed by the Content-Security-Policy.
+
+## Colour palette and WCAG contrast check
+- Decision: Final values (unchanged from SPEC §13 after checking). Light: bg `#FAF8F6`, surface `#FFFFFF`, text `#1C1917`, muted `#57534E`, accent `#5C3A21`, hover `#4A2E1A`, soft `#F3EBE3`, on-accent `#FFFFFF`. Dark: bg `#0E0C0B`, surface `#1A1715`, text `#F5F5F4`, muted `#A8A29E`, accent `#C8996B`, hover `#D9AE82`, soft `#2A1F17`, on-accent `#1A120B`.
+- Alternatives considered: Tailwind's stock stone/amber palette.
+- Why: Measured with the WCAG 2.1 relative-luminance formula; every text pairing passes AA (≥ 4.5:1). Lowest ratios: dark accent text on soft tint 6.29:1, dark accent on surface 6.99:1, light muted on bg 7.20:1. Button text: light 10.09:1 (white on `#5C3A21`), dark 7.24:1 (`#1A120B` on `#C8996B`). Body text is 16–18:1 in both themes.
+- Trade-offs: Borders (`#E7E2DD` / `#2E2925`) are decorative and below 3:1, so they must never be the only way to show state or a form field's edge.
+
+## Self-hosted Inter variable font
+- Decision: Serve the Latin subset of Inter (variable weight, 48 KB woff2, from `@fontsource-variable/inter` 5.3.0) from `/fonts/`, preloaded in `<head>`, with `font-display: swap`. Licence (SIL OFL 1.1) is kept next to the file.
+- Alternatives considered: Google Fonts link; system font stack only.
+- Why: No request to a third party (better privacy, no extra DNS/TLS handshake, simpler CSP); one small file covers all weights.
+- Trade-offs: Only Latin characters use Inter; others (e.g. Turkish ş, ğ) fall back to the system font. The font must be updated by hand.
